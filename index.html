@@ -1,0 +1,2025 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Acompanhamento MTO</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter',sans-serif;
+}
+
+body{
+    background:#f1f5f9;
+    color:#0f172a;
+    overflow:hidden;
+}
+
+/* LOGIN */
+
+.login-screen{
+
+    width:100%;
+    height:100vh;
+
+    background:
+    linear-gradient(
+        135deg,
+        rgba(2,6,23,0.92),
+        rgba(15,23,42,0.95)
+    ),
+    url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=1600&auto=format&fit=crop');
+
+    background-size:cover;
+    background-position:center;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:30px;
+}
+
+.login-container{
+
+    width:1200px;
+
+    min-height:700px;
+
+    background:rgba(255,255,255,0.96);
+
+    border-radius:34px;
+
+    overflow:hidden;
+
+    display:grid;
+
+    grid-template-columns:1.1fr 0.9fr;
+
+    box-shadow:
+    0 30px 80px rgba(0,0,0,0.35);
+}
+
+.login-left{
+
+    background:
+    linear-gradient(
+        135deg,
+        #2563eb,
+        #1e40af
+    );
+
+    padding:60px;
+
+    color:white;
+
+    position:relative;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.login-left::before{
+
+    content:'';
+
+    position:absolute;
+
+    width:450px;
+    height:450px;
+
+    background:rgba(255,255,255,0.08);
+
+    border-radius:50%;
+
+    top:-120px;
+    right:-120px;
+}
+
+.login-left h1{
+
+    font-size:52px;
+
+    line-height:1.1;
+
+    margin-bottom:20px;
+}
+
+.login-left p{
+
+    font-size:17px;
+
+    color:rgba(255,255,255,0.85);
+
+    line-height:1.7;
+
+    margin-bottom:45px;
+}
+
+.login-cards{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:18px;
+}
+
+.login-card{
+
+    background:rgba(255,255,255,0.12);
+
+    backdrop-filter:blur(10px);
+
+    padding:24px;
+
+    border-radius:22px;
+}
+
+.login-card i{
+
+    font-size:28px;
+
+    margin-bottom:18px;
+}
+
+.login-card strong{
+
+    display:block;
+
+    font-size:20px;
+
+    margin-bottom:10px;
+}
+
+.login-card span{
+
+    font-size:13px;
+
+    color:rgba(255,255,255,0.82);
+
+    line-height:1.6;
+}
+
+.login-right{
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:60px;
+}
+
+.login-box{
+
+    width:100%;
+    max-width:420px;
+}
+
+.logo-login{
+
+    width:80px;
+    height:80px;
+
+    border-radius:24px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:white;
+
+    font-size:36px;
+    font-weight:800;
+
+    margin-bottom:28px;
+}
+
+.login-box h2{
+
+    font-size:38px;
+
+    margin-bottom:12px;
+
+    color:#0f172a;
+}
+
+.login-box p{
+
+    color:#64748b;
+
+    margin-bottom:34px;
+
+    line-height:1.6;
+}
+
+.field{
+
+    margin-bottom:22px;
+}
+
+.field label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    color:#334155;
+}
+
+.field input{
+
+    width:100%;
+
+    padding:15px 16px;
+
+    border-radius:16px;
+
+    border:1px solid #dbe2ea;
+
+    background:#f8fafc;
+
+    font-size:14px;
+
+    transition:0.2s;
+}
+
+.field input:focus{
+
+    outline:none;
+
+    border-color:#2563eb;
+
+    background:white;
+}
+
+.login-btn{
+
+    width:100%;
+
+    padding:16px;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:0.2s;
+}
+
+.login-btn:hover{
+
+    transform:translateY(-2px);
+}
+
+/* SISTEMA */
+
+.app{
+
+    display:none;
+
+    width:100%;
+    height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+
+    width:280px;
+
+    background:#020617;
+
+    color:white;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+
+    padding:22px;
+
+    border-right:1px solid rgba(255,255,255,0.05);
+}
+
+.brand{
+
+    display:flex;
+    align-items:center;
+    gap:14px;
+
+    margin-bottom:40px;
+}
+
+.brand-logo{
+
+    width:60px;
+    height:60px;
+
+    border-radius:18px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:30px;
+    font-weight:800;
+}
+
+.brand h2{
+
+    font-size:24px;
+    font-weight:800;
+}
+
+.brand span{
+
+    color:#94a3b8;
+    font-size:13px;
+}
+
+.menu{
+
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.menu button{
+
+    width:100%;
+
+    border:none;
+
+    padding:15px 18px;
+
+    border-radius:16px;
+
+    background:transparent;
+
+    color:#cbd5e1;
+
+    text-align:left;
+
+    display:flex;
+    align-items:center;
+    gap:14px;
+
+    cursor:pointer;
+
+    transition:0.2s;
+
+    font-size:14px;
+}
+
+.menu button:hover{
+
+    background:rgba(255,255,255,0.06);
+
+    color:white;
+}
+
+.menu button.active{
+
+    background:#2563eb;
+
+    color:white;
+}
+
+.user-card{
+
+    background:rgba(255,255,255,0.04);
+
+    padding:18px;
+
+    border-radius:18px;
+}
+
+.user-card strong{
+
+    display:block;
+
+    margin-bottom:6px;
+}
+
+.user-card span{
+
+    color:#94a3b8;
+
+    font-size:13px;
+}
+
+.logout{
+
+    width:100%;
+
+    margin-top:14px;
+
+    padding:13px;
+
+    border:none;
+
+    border-radius:14px;
+
+    background:#ef4444;
+
+    color:white;
+
+    font-weight:700;
+
+    cursor:pointer;
+}
+
+/* MAIN */
+
+.main{
+
+    flex:1;
+
+    display:flex;
+    flex-direction:column;
+
+    overflow:hidden;
+}
+
+/* TOPBAR */
+
+.topbar{
+
+    height:84px;
+
+    background:white;
+
+    border-bottom:1px solid #e2e8f0;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 28px;
+}
+
+.breadcrumb{
+
+    font-size:14px;
+
+    color:#64748b;
+}
+
+.search-box{
+
+    width:320px;
+
+    position:relative;
+}
+
+.search-box i{
+
+    position:absolute;
+
+    left:15px;
+    top:16px;
+
+    color:#94a3b8;
+}
+
+.search-box input{
+
+    width:100%;
+
+    padding:14px 16px 14px 42px;
+
+    border-radius:16px;
+
+    border:1px solid #e2e8f0;
+
+    background:#f8fafc;
+}
+
+/* CONTENT */
+
+.content{
+
+    flex:1;
+
+    overflow:auto;
+
+    padding:28px;
+}
+
+/* PAGES */
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+/* CARDS */
+
+.cards{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+
+    gap:18px;
+
+    margin-bottom:24px;
+}
+
+.card{
+
+    background:white;
+
+    border-radius:24px;
+
+    padding:24px;
+
+    box-shadow:
+    0 8px 30px rgba(15,23,42,0.06);
+}
+
+.card-top{
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    margin-bottom:18px;
+}
+
+.card-top i{
+
+    width:48px;
+    height:48px;
+
+    border-radius:14px;
+
+    background:#eff6ff;
+
+    color:#2563eb;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.card-title{
+
+    color:#64748b;
+
+    font-size:13px;
+
+    font-weight:600;
+}
+
+.card-value{
+
+    font-size:34px;
+
+    font-weight:800;
+}
+
+/* FORM */
+
+.form-box{
+
+    background:white;
+
+    border-radius:28px;
+
+    padding:28px;
+
+    margin-bottom:24px;
+
+    box-shadow:
+    0 8px 30px rgba(15,23,42,0.06);
+}
+
+.section-title{
+
+    font-size:24px;
+
+    font-weight:800;
+
+    margin-bottom:24px;
+}
+
+.grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+
+    gap:18px;
+}
+
+.full{
+    grid-column:1/-1;
+}
+
+.field-label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    color:#334155;
+}
+
+input,
+textarea,
+select{
+
+    width:100%;
+
+    padding:14px 16px;
+
+    border-radius:16px;
+
+    border:1px solid #dbe2ea;
+
+    background:#f8fafc;
+
+    font-size:14px;
+}
+
+textarea{
+    resize:none;
+    height:110px;
+}
+
+.send-btn{
+
+    margin-top:22px;
+
+    padding:14px 24px;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #2563eb,
+        #1d4ed8
+    );
+
+    color:white;
+
+    font-weight:700;
+
+    cursor:pointer;
+}
+
+/* ACTIONS */
+
+.actions{
+
+    display:flex;
+
+    gap:12px;
+
+    margin-bottom:22px;
+
+    flex-wrap:wrap;
+}
+
+/* TABLE */
+
+.table-box{
+
+    background:white;
+
+    border-radius:28px;
+
+    overflow:auto;
+
+    box-shadow:
+    0 8px 30px rgba(15,23,42,0.06);
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    min-width:1700px;
+}
+
+th{
+
+    background:#f8fafc;
+
+    padding:18px;
+
+    font-size:12px;
+
+    color:#64748b;
+
+    font-weight:800;
+
+    border-bottom:1px solid #e2e8f0;
+}
+
+td{
+
+    padding:16px;
+
+    font-size:13px;
+
+    border-bottom:1px solid #f1f5f9;
+
+    text-align:center;
+}
+
+tr:hover{
+
+    background:#f8fafc;
+}
+
+/* STATUS */
+
+.badge{
+
+    padding:7px 14px;
+
+    border-radius:999px;
+
+    color:white;
+
+    font-size:11px;
+
+    font-weight:700;
+}
+
+.pendente{
+    background:#f59e0b;
+}
+
+.finalizado{
+    background:#22c55e;
+}
+
+.aguardando{
+    background:#3b82f6;
+}
+
+.pendencia{
+    background:#ef4444;
+}
+
+/* RESPONSE */
+
+.response{
+
+    margin-top:10px;
+
+    background:#eff6ff;
+
+    border-left:4px solid #2563eb;
+
+    padding:10px;
+
+    border-radius:10px;
+
+    text-align:left;
+
+    font-size:12px;
+}
+
+/* BUTTONS */
+
+.action-btn{
+
+    padding:10px 14px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#2563eb;
+
+    color:white;
+
+    font-weight:700;
+
+    cursor:pointer;
+}
+
+/* MODAL */
+
+.modal{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(15,23,42,0.5);
+
+    display:none;
+
+    justify-content:flex-end;
+}
+
+.modal-content{
+
+    width:460px;
+
+    height:100%;
+
+    background:white;
+
+    padding:28px;
+
+    overflow:auto;
+}
+
+.modal-title{
+
+    font-size:24px;
+
+    font-weight:800;
+
+    margin-bottom:24px;
+}
+
+.save-btn{
+
+    width:100%;
+
+    margin-top:22px;
+
+    padding:15px;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #22c55e,
+        #16a34a
+    );
+
+    color:white;
+
+    font-weight:700;
+
+    cursor:pointer;
+}
+
+.hidden{
+    display:none;
+}
+
+@media(max-width:1200px){
+
+    .sidebar{
+        display:none;
+    }
+
+    .login-container{
+        grid-template-columns:1fr;
+    }
+
+    .login-left{
+        display:none;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<div class="login-screen" id="loginScreen">
+
+    <div class="login-container">
+
+        <div class="login-left">
+
+            <div>
+
+                <h1>
+                    Plataforma Corporativa MTO
+                </h1>
+
+                <p>
+                    Sistema operacional para gestão de solicitações, retornos PCP e acompanhamento de produção em tempo real.
+                </p>
+
+                <div class="login-cards">
+
+                    <div class="login-card">
+
+                        <i class="fa-solid fa-chart-line"></i>
+
+                        <strong>
+                            Gestão Inteligente
+                        </strong>
+
+                        <span>
+                            Controle centralizado das solicitações MTO.
+                        </span>
+
+                    </div>
+
+                    <div class="login-card">
+
+                        <i class="fa-solid fa-clock"></i>
+
+                        <strong>
+                            Fluxo Operacional
+                        </strong>
+
+                        <span>
+                            Acompanhamento rápido das demandas produtivas.
+                        </span>
+
+                    </div>
+
+                    <div class="login-card">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        <strong>
+                            Comunicação PCP
+                        </strong>
+
+                        <span>
+                            Retornos organizados entre solicitante e destinatário.
+                        </span>
+
+                    </div>
+
+                    <div class="login-card">
+
+                        <i class="fa-solid fa-box"></i>
+
+                        <strong>
+                            Ambiente Corporativo
+                        </strong>
+
+                        <span>
+                            Interface moderna focada em logística e produção.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="login-right">
+
+            <div class="login-box">
+
+                <div class="logo-login">
+                    N
+                </div>
+
+                <h2>
+                    Acompanhamento MTO
+                </h2>
+
+                <p>
+                    Acesse a plataforma utilizando suas credenciais corporativas.
+                </p>
+
+                <div class="field">
+
+                    <label>USUÁRIO</label>
+
+                    <input type="text" id="usuario">
+
+                </div>
+
+                <div class="field">
+
+                    <label>SENHA</label>
+
+                    <input type="password" id="senha">
+
+                </div>
+
+                <button
+                class="login-btn"
+                onclick="login()">
+
+                ACESSAR SISTEMA
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- SISTEMA -->
+
+<div class="app" id="app">
+
+    <div class="sidebar">
+
+        <div>
+
+            <div class="brand">
+
+                <div class="brand-logo">
+                    N
+                </div>
+
+                <div>
+
+                    <h2>MTO</h2>
+
+                    <span>
+                        Painel Corporativo
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="menu">
+
+                <button class="active" onclick="abrirPagina('dashboard',this)">
+                    <i class="fa-solid fa-table-columns"></i>
+                    Dashboard
+                </button>
+
+                <button onclick="abrirPagina('solicitacoes',this)">
+                    <i class="fa-solid fa-file-circle-plus"></i>
+                    Solicitações
+                </button>
+
+                <button onclick="abrirPagina('exportacoes',this)">
+                    <i class="fa-solid fa-file-export"></i>
+                    Exportações
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="user-card">
+
+            <strong id="usuarioLogado">
+                Usuário
+            </strong>
+
+            <span>
+                Plataforma Corporativa MTO
+            </span>
+
+            <button class="logout" onclick="logout()">
+                SAIR
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="main">
+
+        <div class="topbar">
+
+            <div class="breadcrumb">
+                Dashboard / Acompanhamento MTO
+            </div>
+
+            <div class="search-box">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input
+                type="text"
+                placeholder="Pesquisar...">
+
+            </div>
+
+        </div>
+
+        <div class="content">
+
+            <!-- DASHBOARD -->
+
+            <div class="page active" id="dashboard">
+
+                <div class="cards">
+
+                    <div class="card">
+
+                        <div class="card-top">
+
+                            <div>
+
+                                <div class="card-title">
+                                    Pendentes
+                                </div>
+
+                                <div class="card-value" id="kpiPendentes">
+                                    0
+                                </div>
+
+                            </div>
+
+                            <i class="fa-solid fa-clock"></i>
+
+                        </div>
+
+                    </div>
+
+                    <div class="card">
+
+                        <div class="card-top">
+
+                            <div>
+
+                                <div class="card-title">
+                                    Finalizados
+                                </div>
+
+                                <div class="card-value" id="kpiFinalizados">
+                                    0
+                                </div>
+
+                            </div>
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                        </div>
+
+                    </div>
+
+                    <div class="card">
+
+                        <div class="card-top">
+
+                            <div>
+
+                                <div class="card-title">
+                                    Aguardando
+                                </div>
+
+                                <div class="card-value" id="kpiAguardando">
+                                    0
+                                </div>
+
+                            </div>
+
+                            <i class="fa-solid fa-hourglass-half"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- SOLICITACOES -->
+
+            <div class="page" id="solicitacoes">
+
+                <div
+                class="form-box hidden"
+                id="formSolicitante">
+
+                    <div class="section-title">
+                        Nova Solicitação
+                    </div>
+
+                    <div class="grid">
+
+                        <div>
+
+                            <label class="field-label">
+                                DATA SOLICITADA
+                            </label>
+
+                            <input type="date" id="dataSolicitacao">
+
+                        </div>
+
+                        <div>
+
+                            <label class="field-label">
+                                DATA CLIENTE
+                            </label>
+
+                            <input type="date" id="dataCliente">
+
+                        </div>
+
+                        <div>
+
+                            <label class="field-label">
+                                CLIENTE
+                            </label>
+
+                            <input type="text" id="cliente">
+
+                        </div>
+
+                        <div>
+
+                            <label class="field-label">
+                                COD ITEM
+                            </label>
+
+                            <input type="text" id="codItem">
+
+                        </div>
+
+                        <div>
+
+                            <label class="field-label">
+                                QTD SOLICITADA
+                            </label>
+
+                            <input type="number" id="quantidade">
+
+                        </div>
+
+                        <div>
+
+                            <label class="field-label">
+                                ENVIAR PARA
+                            </label>
+
+                            <select id="destinatario">
+
+                                <option>Aline-PCP</option>
+                                <option>Tomaz-PCP</option>
+                                <option>Tom-PCP</option>
+
+                            </select>
+
+                        </div>
+
+                        <div class="full">
+
+                            <label class="field-label">
+                                OBSERVAÇÃO
+                            </label>
+
+                            <textarea id="observacao"></textarea>
+
+                        </div>
+
+                    </div>
+
+                    <button
+                    class="send-btn"
+                    onclick="enviarSolicitacao()">
+
+                    ENVIAR SOLICITAÇÃO
+
+                    </button>
+
+                </div>
+
+                <div class="actions">
+
+                    <input
+                    type="month"
+                    id="filtroMes"
+                    style="max-width:220px;">
+
+                    <button
+                    class="send-btn"
+                    style="margin-top:0;"
+                    onclick="filtrarMes()">
+
+                    FILTRAR
+
+                    </button>
+
+                    <button
+                    class="logout"
+                    style="
+                    width:auto;
+                    margin-top:0;
+                    background:#64748b;
+                    "
+                    onclick="limparFiltro()">
+
+                    LIMPAR
+
+                    </button>
+
+                </div>
+
+                <div class="table-box">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>ID</th>
+                                <th>DATA SOLICITADA</th>
+                                <th>DATA CLIENTE</th>
+                                <th>DATA ATENDIMENTO</th>
+                                <th>DATA PRODUÇÃO</th>
+                                <th>DATA RETORNO PCP</th>
+                                <th>SOLICITANTE</th>
+                                <th>DESTINATÁRIO</th>
+                                <th>CLIENTE</th>
+                                <th>COD ITEM</th>
+                                <th>QTD</th>
+                                <th>OBSERVAÇÃO</th>
+                                <th>STATUS</th>
+                                <th>AÇÃO</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="tabelaSolicitacoes">
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+            <!-- EXPORTACOES -->
+
+            <div class="page" id="exportacoes">
+
+                <div class="cards">
+
+                    <div class="card">
+
+                        <div class="card-top">
+
+                            <div>
+
+                                <div class="card-title">
+                                    Exportar Excel
+                                </div>
+
+                            </div>
+
+                            <i class="fa-solid fa-file-excel"></i>
+
+                        </div>
+
+                        <button
+                        class="send-btn"
+                        onclick="exportarExcel()">
+
+                        BAIXAR XLSX
+
+                        </button>
+
+                    </div>
+
+                    <div class="card">
+
+                        <div class="card-top">
+
+                            <div>
+
+                                <div class="card-title">
+                                    Exportar PDF
+                                </div>
+
+                            </div>
+
+                            <i class="fa-solid fa-file-pdf"></i>
+
+                        </div>
+
+                        <button
+                        class="send-btn"
+                        onclick="exportarPDF()">
+
+                        BAIXAR PDF
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- MODAL -->
+
+<div class="modal" id="modalResposta">
+
+    <div class="modal-content">
+
+        <div class="modal-title">
+            Responder Solicitação
+        </div>
+
+        <div class="field">
+
+            <label class="field-label">
+                RETORNO
+            </label>
+
+            <textarea id="respostaTexto"></textarea>
+
+        </div>
+
+        <div class="field">
+
+            <label class="field-label">
+                DATA PRODUÇÃO
+            </label>
+
+            <input type="date" id="dataProducao">
+
+        </div>
+
+        <div class="field">
+
+            <label class="field-label">
+                DATA RETORNO PCP
+            </label>
+
+            <input type="date" id="dataRetornoPcp">
+
+        </div>
+
+        <div class="field">
+
+            <label class="field-label">
+                STATUS
+            </label>
+
+            <select id="novoStatus">
+
+                <option>FINALIZADO</option>
+                <option>AGUARDANDO</option>
+                <option>PENDÊNCIA</option>
+
+            </select>
+
+        </div>
+
+        <button
+        class="save-btn"
+        onclick="salvarResposta()">
+
+        ENVIAR RETORNO
+
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+let usuarioAtual = null;
+
+let solicitacoes =
+JSON.parse(localStorage.getItem("mto")) || [];
+
+let solicitacaoSelecionada = null;
+
+let filtroAtual = "";
+
+/* LOGIN */
+
+function login(){
+
+    const usuario =
+    document.getElementById("usuario").value;
+
+    const senha =
+    document.getElementById("senha").value;
+
+    if(usuario === "Daniel" && senha === "pcp2026"){
+
+        usuarioAtual = "Daniel";
+
+    }
+
+    else if(
+
+        (
+            usuario === "Aline-PCP"
+            ||
+            usuario === "Tomaz-PCP"
+            ||
+            usuario === "Tom-PCP"
+        )
+
+        &&
+
+        senha === "pcp2026"
+
+    ){
+
+        usuarioAtual = usuario;
+
+    }
+
+    else{
+
+        alert("Usuário inválido");
+        return;
+
+    }
+
+    document.getElementById("loginScreen")
+    .style.display = "none";
+
+    document.getElementById("app")
+    .style.display = "flex";
+
+    document.getElementById("usuarioLogado")
+    .innerText = usuarioAtual;
+
+    if(usuarioAtual === "Daniel"){
+
+        document.getElementById("formSolicitante")
+        .classList.remove("hidden");
+
+    }
+
+    renderTabela();
+
+}
+
+function logout(){
+
+    location.reload();
+
+}
+
+/* MENU */
+
+function abrirPagina(id,btn){
+
+    document.querySelectorAll(".page")
+    .forEach(p => p.classList.remove("active"));
+
+    document.getElementById(id)
+    .classList.add("active");
+
+    document.querySelectorAll(".menu button")
+    .forEach(b => b.classList.remove("active"));
+
+    btn.classList.add("active");
+
+}
+
+/* ENVIAR */
+
+function enviarSolicitacao(){
+
+    const solicitacao = {
+
+        id: Date.now(),
+
+        dataSolicitacao:
+        document.getElementById("dataSolicitacao").value,
+
+        dataCliente:
+        document.getElementById("dataCliente").value,
+
+        dataAtendimento:"-",
+
+        dataProducao:"-",
+
+        dataRetornoPcp:"-",
+
+        cliente:
+        document.getElementById("cliente").value,
+
+        codItem:
+        document.getElementById("codItem").value,
+
+        quantidade:
+        document.getElementById("quantidade").value,
+
+        observacao:
+        document.getElementById("observacao").value,
+
+        remetente:usuarioAtual,
+
+        destinatario:
+        document.getElementById("destinatario").value,
+
+        status:"PENDENTE",
+
+        resposta:""
+
+    };
+
+    solicitacoes.push(solicitacao);
+
+    salvarStorage();
+
+    renderTabela();
+
+    alert("Solicitação enviada");
+
+}
+
+/* STORAGE */
+
+function salvarStorage(){
+
+    localStorage.setItem(
+        "mto",
+        JSON.stringify(solicitacoes)
+    );
+
+}
+
+/* FILTRO */
+
+function filtrarMes(){
+
+    filtroAtual =
+    document.getElementById("filtroMes").value;
+
+    renderTabela();
+
+}
+
+function limparFiltro(){
+
+    filtroAtual = "";
+
+    document.getElementById("filtroMes").value = "";
+
+    renderTabela();
+
+}
+
+/* RENDER */
+
+function renderTabela(){
+
+    const tabela =
+    document.getElementById("tabelaSolicitacoes");
+
+    tabela.innerHTML = "";
+
+    let filtradas = solicitacoes.filter(item => {
+
+        let permitido = false;
+
+        if(usuarioAtual === "Daniel"){
+
+            permitido =
+            item.remetente === "Daniel";
+
+        }
+
+        else{
+
+            permitido =
+            item.destinatario === usuarioAtual;
+
+        }
+
+        if(filtroAtual){
+
+            return permitido &&
+            item.dataSolicitacao.startsWith(filtroAtual);
+
+        }
+
+        return permitido;
+
+    });
+
+    filtradas.forEach(item => {
+
+        tabela.innerHTML += `
+
+        <tr>
+
+            <td>${item.id}</td>
+            <td>${item.dataSolicitacao}</td>
+            <td>${item.dataCliente}</td>
+            <td>${item.dataAtendimento}</td>
+            <td>${item.dataProducao}</td>
+            <td>${item.dataRetornoPcp}</td>
+            <td>${item.remetente}</td>
+            <td>${item.destinatario}</td>
+            <td>${item.cliente}</td>
+            <td>${item.codItem}</td>
+            <td>${item.quantidade}</td>
+
+            <td>
+
+                ${item.observacao}
+
+                ${
+
+                    item.resposta
+
+                    ?
+
+                    `
+
+                    <div class="response">
+
+                        <b>RETORNO:</b><br>
+
+                        ${item.resposta}
+
+                    </div>
+
+                    `
+
+                    :
+
+                    ''
+
+                }
+
+            </td>
+
+            <td>
+
+                <span class="badge
+
+                ${
+
+                item.status === 'FINALIZADO'
+
+                ? 'finalizado'
+
+                :
+
+                item.status === 'AGUARDANDO'
+
+                ? 'aguardando'
+
+                :
+
+                item.status === 'PENDÊNCIA'
+
+                ? 'pendencia'
+
+                :
+
+                'pendente'
+
+                }
+
+                ">
+
+                ${item.status}
+
+                </span>
+
+            </td>
+
+            <td>
+
+                ${
+
+                usuarioAtual !== "Daniel"
+
+                &&
+
+                item.status !== "FINALIZADO"
+
+                ?
+
+                `
+
+                <button
+                class="action-btn"
+                onclick="abrirModal(${item.id})">
+
+                RESPONDER
+
+                </button>
+
+                `
+
+                :
+
+                '-'
+
+                }
+
+            </td>
+
+        </tr>
+
+        `;
+
+    });
+
+    atualizarKPIs();
+
+}
+
+/* KPIS */
+
+function atualizarKPIs(){
+
+    document.getElementById("kpiPendentes")
+    .innerText =
+    solicitacoes.filter(x => x.status === "PENDENTE").length;
+
+    document.getElementById("kpiFinalizados")
+    .innerText =
+    solicitacoes.filter(x => x.status === "FINALIZADO").length;
+
+    document.getElementById("kpiAguardando")
+    .innerText =
+    solicitacoes.filter(x => x.status === "AGUARDANDO").length;
+
+}
+
+/* MODAL */
+
+function abrirModal(id){
+
+    solicitacaoSelecionada =
+    solicitacoes.find(x => x.id === id);
+
+    document.getElementById("respostaTexto")
+    .value =
+    solicitacaoSelecionada.resposta || "";
+
+    document.getElementById("dataProducao")
+    .value =
+    solicitacaoSelecionada.dataProducao || "";
+
+    document.getElementById("dataRetornoPcp")
+    .value =
+    solicitacaoSelecionada.dataRetornoPcp || "";
+
+    document.getElementById("novoStatus")
+    .value =
+    solicitacaoSelecionada.status || "PENDENTE";
+
+    document.getElementById("modalResposta")
+    .style.display = "flex";
+
+}
+
+function salvarResposta(){
+
+    solicitacaoSelecionada.resposta =
+    document.getElementById("respostaTexto").value;
+
+    solicitacaoSelecionada.dataProducao =
+    document.getElementById("dataProducao").value;
+
+    solicitacaoSelecionada.dataRetornoPcp =
+    document.getElementById("dataRetornoPcp").value;
+
+    solicitacaoSelecionada.status =
+    document.getElementById("novoStatus").value;
+
+    solicitacaoSelecionada.dataAtendimento =
+    new Date().toLocaleDateString("pt-BR");
+
+    salvarStorage();
+
+    document.getElementById("modalResposta")
+    .style.display = "none";
+
+    renderTabela();
+
+    alert("Retorno enviado");
+
+}
+
+/* EXPORTAR */
+
+function exportarExcel(){
+
+    const worksheet =
+    XLSX.utils.json_to_sheet(solicitacoes);
+
+    const workbook =
+    XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+        workbook,
+        worksheet,
+        "MTO"
+    );
+
+    XLSX.writeFile(
+        workbook,
+        "Acompanhamento_MTO.xlsx"
+    );
+
+}
+
+async function exportarPDF(){
+
+    const { jsPDF } = window.jspdf;
+
+    const doc =
+    new jsPDF('landscape');
+
+    doc.text(
+        "Acompanhamento MTO",
+        14,
+        15
+    );
+
+    doc.save(
+        "Acompanhamento_MTO.pdf"
+    );
+
+}
+
+</script>
+
+</body>
+</html>
