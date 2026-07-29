@@ -1,1656 +1,354 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Programação MTO</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
-
-    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.6.0/dist/jspdf.plugin.autotable.min.js"></script>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { 
-            getFirestore, 
-            collection, 
-            addDoc, 
-            onSnapshot, 
-            doc, 
-            updateDoc, 
-            deleteDoc,
-            query, 
-            where,
-            orderBy,
-            limit
-        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-        import { 
-            getAuth, 
-            signInWithEmailAndPassword 
-        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDz8qIZpkaj5ygJJJwyAfYH_3xKFxsZcU8",
-            authDomain: "mto-webapp.firebaseapp.com",
-            projectId: "mto-webapp",
-            storageBucket: "mto-webapp.firebasestorage.app",
-            messagingSenderId: "998118770114",
-            appId: "1:998118770114:web:f29f30ed3c28ba5dc2c25b"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        window.db = db;
-        window.auth = auth;
-        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
-        window.db_collection = collection;
-        window.db_addDoc = addDoc;
-        window.db_onSnapshot = onSnapshot;
-        window.db_doc = doc;
-        window.db_updateDoc = updateDoc;
-        window.db_deleteDoc = deleteDoc;
-        window.db_query = query;
-        window.db_where = where;
-        window.db_orderBy = orderBy;
-        window.db_limit = limit;
-    </script>
-
-    <style>
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:'Inter',sans-serif;
-        }
-
-        body{
-            background:#f1f5f9;
-            color:#0f172a;
-            overflow:hidden;
-            position: relative;
-            min-height: 100vh;
-        }
-
-        .marca-dagua {
-            position: fixed;
-            bottom: 12px;
-            right: 20px;
-            font-size: 11px;
-            font-weight: 500;
-            color: #94a3b8;
-            opacity: 0.6;
-            z-index: 9999;
-            pointer-events: none;
-            letter-spacing: 0.5px;
-        }
-
-        /* LOGIN */
-        .login-screen{
-            width:100%;
-            height:100vh;
-            background: linear-gradient(135deg, rgba(2,6,23,0.92), rgba(15,23,42,0.95)), url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=1600&auto=format&fit=crop');
-            background-size:cover;
-            background-position:center;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            padding:30px;
-        }
-
-        .login-container{
-            width:1200px;
-            min-height:700px;
-            background:rgba(255,255,255,0.96);
-            border-radius:34px;
-            overflow:hidden;
-            display:grid;
-            grid-template-columns:1.1fr 0.9fr;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.35);
-        }
-
-        .login-left{
-            background: linear-gradient(135deg, #2563eb, #1e40af);
-            padding:60px;
-            color:white;
-            position:relative;
-            display:flex;
-            flex-direction:column;
-            justify-content:center;
-        }
-
-        .login-left::before{
-            content:'';
-            position:absolute;
-            width:450px;
-            height:450px;
-            background:rgba(255,255,255,0.08);
-            border-radius:50%;
-            top:-120px;
-            right:-120px;
-        }
-
-        .login-left h1{
-            font-size:52px;
-            line-height:1.1;
-            margin-bottom:20px;
-        }
-
-        .login-left p{
-            font-size:17px;
-            color:rgba(255,255,255,0.85);
-            line-height:1.7;
-            margin-bottom:45px;
-        }
-
-        .login-cards{
-            display:grid;
-            grid-template-columns:1fr 1fr;
-            gap:18px;
-        }
-
-        .login-card{
-            background:rgba(255,255,255,0.12);
-            backdrop-filter:blur(10px);
-            padding:24px;
-            border-radius:22px;
-        }
-
-        .login-card i{
-            font-size:28px;
-            margin-bottom:18px;
-        }
-
-        .login-card strong{
-            display:block;
-            font-size:20px;
-            margin-bottom:10px;
-        }
-
-        .login-card span{
-            font-size:13px;
-            color:rgba(255,255,255,0.82);
-            line-height:1.6;
-        }
-
-        .login-right{
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            padding:60px;
-        }
-
-        .login-box{
-            width:100%;
-            max-width:420px;
-        }
-
-        .logo-login{
-            width:80px;
-            height:80px;
-            border-radius:24px;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            color:white;
-            font-size:36px;
-            font-weight:800;
-            margin-bottom:28px;
-        }
-
-        .login-box h2{
-            font-size:38px;
-            margin-bottom:12px;
-            color:#0f172a;
-        }
-
-        .login-box p{
-            color:#64748b;
-            margin-bottom:34px;
-            line-height:1.6;
-        }
-
-        .field{
-            margin-bottom:22px;
-        }
-
-        .field label{
-            display:block;
-            margin-bottom:8px;
-            font-size:13px;
-            font-weight:700;
-            color:#334155;
-        }
-
-        .field input{
-            width:100%;
-            padding:15px 16px;
-            border-radius:16px;
-            border:1px solid #dbe2ea;
-            background:#f8fafc;
-            font-size:14px;
-            transition:0.2s;
-        }
-
-        .field input:focus{
-            outline:none;
-            border-color:#2563eb;
-            background:white;
-        }
-
-        .login-btn{
-            width:100%;
-            padding:16px;
-            border:none;
-            border-radius:16px;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color:white;
-            font-size:15px;
-            font-weight:700;
-            cursor:pointer;
-            transition:0.2s;
-        }
-
-        .login-btn:hover:not(:disabled){
-            transform:translateY(-2px);
-        }
-
-        .login-btn:disabled {
-            background: #94a3b8;
-            cursor: not-allowed;
-        }
-
-        /* SISTEMA */
-        .app{
-            display:none;
-            width:100%;
-            height:100vh;
-        }
-
-        /* SIDEBAR */
-        .sidebar{
-            width:280px;
-            background:#020617;
-            color:white;
-            display:flex;
-            flex-direction:column;
-            justify-content:space-between;
-            padding:22px;
-            border-right:1px solid rgba(255,255,255,0.05);
-        }
-
-        .brand{
-            display:flex;
-            align-items:center;
-            gap:14px;
-            margin-bottom:40px;
-        }
-
-        .brand-logo{
-            width:60px;
-            height:60px;
-            border-radius:18px;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:30px;
-            font-weight:800;
-        }
-
-        .brand h2{
-            font-size:24px;
-            font-weight:800;
-            margin-bottom: 2px;
-        }
-
-        .brand span{
-            color:#94a3b8;
-            font-size:13px;
-        }
-
-        .menu{
-            display:flex;
-            flex-direction:column;
-            gap:10px;
-        }
-
-        .menu button{
-            width:100%;
-            border:none;
-            padding:15px 18px;
-            border-radius:16px;
-            background:transparent;
-            color:#cbd5e1;
-            text-align:left;
-            display:flex;
-            align-items:center;
-            gap:14px;
-            cursor:pointer;
-            transition:0.2s;
-            font-size:14px;
-        }
-
-        .menu button:hover{
-            background:rgba(255,255,255,0.06);
-            color:white;
-        }
-
-        .menu button.active{
-            background:#2563eb;
-            color:white;
-        }
-
-        .user-card{
-            background:rgba(255,255,255,0.04);
-            padding:18px;
-            border-radius:18px;
-        }
-
-        .user-card strong{
-            display:block;
-            margin-bottom:6px;
-        }
-
-        .user-card span{
-            color:#94a3b8;
-            font-size:13px;
-        }
-
-        .logout{
-            width:100%;
-            margin-top:14px;
-            padding:13px;
-            border:none;
-            border-radius:14px;
-            background:#ef4444;
-            color:white;
-            font-weight:700;
-            cursor:pointer;
-        }
-
-        /* MAIN */
-        .main{
-            flex:1;
-            display:flex;
-            flex-direction:column;
-            overflow:hidden;
-        }
-
-        /* TOPBAR */
-        .topbar{
-            height:84px;
-            background:white;
-            border-bottom:1px solid #e2e8f0;
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            padding:0 28px;
-        }
-
-        .breadcrumb{
-            font-size:14px;
-            color:#64748b;
-        }
-
-        .search-box{
-            width:320px;
-            position:relative;
-        }
-
-        .search-box i{
-            position:absolute;
-            left:15px;
-            top:16px;
-            color:#94a3b8;
-        }
-
-        .search-box input{
-            width:100%;
-            padding:14px 16px 14px 42px;
-            border-radius:16px;
-            border:1px solid #e2e8f0;
-            background:#f8fafc;
-        }
-
-        /* CONTENT */
-        .content{
-            flex:1;
-            overflow:auto;
-            padding:28px;
-        }
-
-        /* PAGES */
-        .page{ display:none; }
-        .page.active{ display:block; }
-
-        .cards{
-            display:grid;
-            grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
-            gap:16px;
-            margin-bottom:24px;
-        }
-
-        .card{
-            background:white;
-            border-radius:22px;
-            padding:20px;
-            box-shadow: 0 8px 30px rgba(15,23,42,0.06);
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 2px solid transparent;
-        }
-
-        .card:hover{
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(15,23,42,0.12);
-        }
-
-        .card.active-filter {
-            border-color: #2563eb;
-            background: #eff6ff;
-        }
-
-        .card-top{
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-        }
-
-        .card-top i{
-            width:44px;
-            height:44px;
-            border-radius:12px;
-            background:#f1f5f9;
-            color:#475569;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size: 18px;
-        }
-
-        .card-icon-total { background: #f1f5f9 !important; color: #475569 !important; }
-        .card-icon-pendente { background: #fef3c7 !important; color: #d97706 !important; }
-        .card-icon-finalizado { background: #dcfce7 !important; color: #16a34a !important; }
-        .card-icon-aguardando { background: #dbeafe !important; color: #2563eb !important; }
-        .card-icon-pendencia { background: #fee2e2 !important; color: #dc2626 !important; }
-
-        .card-title{
-            color:#64748b;
-            font-size:13px;
-            font-weight:600;
-            margin-bottom: 4px;
-        }
-
-        .card-value{
-            font-size:30px;
-            font-weight:800;
-        }
-
-        /* FORM */
-        .form-box{
-            background:white;
-            border-radius:28px;
-            padding:28px;
-            margin-bottom:24px;
-            box-shadow: 0 8px 30px rgba(15,23,42,0.06);
-        }
-
-        .section-title{
-            font-size:24px;
-            font-weight:800;
-            margin-bottom:24px;
-        }
-
-        .grid{
-            display:grid;
-            grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
-            gap:18px;
-        }
-
-        .full{ grid-column:1/-1; }
-
-        .field-label{
-            display:block;
-            margin-bottom:8px;
-            font-size:13px;
-            font-weight:700;
-            color:#334155;
-        }
-
-        input, textarea, select{
-            width:100%;
-            padding:14px 16px;
-            border-radius:16px;
-            border:1px solid #dbe2ea;
-            background:#f8fafc;
-            font-size:14px;
-        }
-
-        input:read-only {
-            background: #e2e8f0;
-            color: #475569;
-            font-weight: 600;
-            cursor: not-allowed;
-        }
-
-        textarea{
-            resize:none;
-            height:110px;
-        }
-
-        .send-btn{
-            margin-top:22px;
-            padding:14px 24px;
-            border:none;
-            border-radius:16px;
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            color:white;
-            font-weight:700;
-            cursor:pointer;
-        }
-
-        .send-btn:disabled {
-            background: #94a3b8;
-            cursor: not-allowed;
-        }
-
-        /* SEÇÃO DE ITENS DINÂMICOS COMPACTA */
-        .sub-secao-itens {
-            background: #f8fafc;
-            border: 2px dashed #cbd5e1;
-            border-radius: 20px;
-            padding: 20px;
-            margin-top: 24px;
-        }
-
-        .btn-adicionar-item {
-            background: #020617;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: 0.2s;
-        }
-
-        .btn-adicionar-item:hover {
-            background: #1e293b;
-        }
-
-        /* CONTAINER PARA CORREÇÃO DE LARGURA DA TABELA DE ITENS */
-        .tabela-itens-wrapper {
-            width: 100%;
-            max-width: 680px; /* Alinha perfeitamente com o tamanho padrão dos cards/colunas triplas */
-            overflow-x: auto;
-            margin-top: 16px;
-            border-radius: 16px;
-            border: 1px solid #dbe2ea;
-        }
-
-        /* TABELA DE ITENS CORRIGIDA */
-        .tabela-itens-provisorios {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            table-layout: fixed;
-        }
-
-        .tabela-itens-provisorios th {
-            background: #f1f5f9;
-            padding: 12px 16px;
-            font-size: 12px;
-            font-weight: 700;
-            color: #334155;
-            text-align: left;
-            border-bottom: 1px solid #dbe2ea;
-        }
-
-        .tabela-itens-provisorios td {
-            padding: 14px 16px;
-            font-size: 14px;
-            color: #0f172a;
-            border-bottom: 1px solid #f1f5f9;
-            text-align: left;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .tabela-itens-provisorios tr.item-row {
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .tabela-itens-provisorios tr.item-row:hover {
-            background: #fee2e2;
-        }
-
-        /* ACTIONS */
-        .actions{
-            display:flex;
-            gap:12px;
-            margin-bottom:22px;
-            flex-wrap:wrap;
-        }
-
-        /* TABLE */
-        .table-box{
-            background:white;
-            border-radius:28px;
-            overflow:auto;
-            box-shadow: 0 8px 30px rgba(15,23,42,0.06);
-        }
-
-        table{
-            width:100%;
-            border-collapse:collapse;
-            min-width:2600px;
-        }
-
-        th{
-            background:#f8fafc;
-            padding:18px;
-            font-size:12px;
-            color:#64748b;
-            font-weight:800;
-            border-bottom:1px solid #e2e8f0;
-        }
-
-        td{
-            padding:16px;
-            font-size:13px;
-            border-bottom:1px solid #f1f5f9;
-            text-align:center;
-        }
-
-        tr:hover{ background:#f8fafc; }
-
-        /* PAGINAÇÃO BUTTON */
-        .paginacao-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-            margin-bottom: 30px;
-        }
-
-        .load-more-btn {
-            background: white;
-            color: #2563eb;
-            border: 2px solid #2563eb;
-            padding: 12px 28px;
-            border-radius: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .load-more-btn:hover {
-            background: #2563eb;
-            color: white;
-        }
-
-        /* STATUS BADGES */
-        .badge{
-            padding:7px 14px;
-            border-radius:999px;
-            color:white;
-            font-size:11px;
-            font-weight:700;
-        }
-
-        .pendente{ background:#f59e0b; }
-        .finalizado{ background:#22c55e; }
-        .aguardando{ background:#3b82f6; }
-        .pendencia{ background:#ef4444; }
-
-        /* RESPONSE & AUDITORIA */
-        .response{
-            margin-top:10px;
-            background:#eff6ff;
-            border-left:4px solid #2563eb;
-            padding:10px;
-            border-radius:10px;
-            text-align:left;
-            font-size:12px;
-        }
-
-        .log-auditoria {
-            margin-top: 6px;
-            font-size: 10px;
-            color: #94a3b8;
-            font-style: italic;
-            text-align: left;
-        }
-
-        /* BUTTONS */
-        .action-btn{
-            padding:10px 14px;
-            border:none;
-            border-radius:12px;
-            background:#2563eb;
-            color:white;
-            font-weight:700;
-            cursor:pointer;
-        }
-
-        .delete-btn {
-            padding: 10px 14px;
-            border: none;
-            border-radius: 12px;
-            background: #ef4444;
-            color: white;
-            font-weight: 700;
-            cursor: pointer;
-            margin-left: 5px;
-        }
-
-        /* MODAL */
-        .modal{
-            position:fixed;
-            inset:0;
-            background:rgba(15,23,42,0.5);
-            display:none;
-            justify-content:flex-end;
-            z-index: 999;
-        }
-
-        .modal-content{
-            width:460px;
-            height:100%;
-            background:white;
-            padding:28px;
-            overflow:auto;
-        }
-
-        .modal-title{
-            font-size:24px;
-            font-weight:800;
-            margin-bottom:24px;
-        }
-
-        .save-btn{
-            width:100%;
-            margin-top:22px;
-            padding:15px;
-            border:none;
-            border-radius:16px;
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            color:white;
-            font-weight:700;
-            cursor:pointer;
-        }
-
-        .hidden{ display:none; }
-
-        @media(max-width:1200px){
-            .sidebar{ display:none; }
-            .login-container{ grid-template-columns:1fr; }
-            .login-left{ display:none; }
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
 <body>
 
-    <div class="marca-dagua">Desenvolvido por Carlos Henrique</div>
+    <div class="marca-dagua">MTO WebApp v1.1.6</div>
 
-    <div class="login-screen" id="loginScreen">
-        <div class="login-container">
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container login-container-pro">
             <div class="login-left">
-                <div>
-                    <h1>Plataforma Corporativa MTO</h1>
-                    <p>Sistema operacional para gestão de solicitações, retornos PCP e acompanhamento de produção em tempo real.</p>
-                    <div class="login-cards">
-                        <div class="login-card">
-                            <i class="fa-solid fa-chart-line"></i>
-                            <strong>Gestão Inteligente</strong>
-                            <span>Controle centralizado das solicitações MTO.</span>
-                        </div>
-                        <div class="login-card">
-                            <i class="fa-solid fa-clock"></i>
-                            <strong>Fluxo Operacional</strong>
-                            <span>Acompanhamento rápido das demandas produtivas.</span>
-                        </div>
-                        <div class="login-card">
-                            <i class="fa-solid fa-circle-check"></i>
-                            <strong>Comunicação PCP</strong>
-                            <span>Retornos organizados entre solicitante e destinatário.</span>
-                        </div>
-                        <div class="login-card">
-                            <i class="fa-solid fa-box"></i>
-                            <strong>Ambiente Corporativo</strong>
-                            <span>Interface moderna focada em logística e produção.</span>
-                        </div>
+                <div class="login-badge-tag"><i class="fa-solid fa-bolt"></i> Sistema Integrado Corporativo</div>
+                <h1>Programação MTO</h1>
+                <p>Plataforma avançada para controle de solicitações, prazos e gestão operacional otimizada entre PCP e Comercial.</p>
+                <div class="login-cards">
+                    <div class="login-card">
+                        <i class="fa-solid fa-industry"></i>
+                        <strong>Atendimento PCP</strong>
+                        <span>Controle e respostas</span>
+                    </div>
+                    <div class="login-card">
+                        <i class="fa-solid fa-users"></i>
+                        <strong>Vendedores</strong>
+                        <span>Envio de pedidos</span>
                     </div>
                 </div>
             </div>
-
             <div class="login-right">
                 <div class="login-box">
-                    <div class="logo-login">N</div>
-                    <h2>Programação MTO</h2>
-                    <p>Acesse com seu e-mail e senha cadastrados no Firebase Auth.</p>
+                    <div class="logo-login"><i class="fa-solid fa-cubes"></i></div>
+                    <h2>Acessar Painel</h2>
+                    <p>Entre com suas credenciais para continuar.</p>
                     <div class="field">
-                        <label>E-MAIL</label>
-                        <input type="email" id="usuario" placeholder="exemplo@dominio.com">
+                        <label for="usuario">E-mail Corporativo</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-regular fa-envelope"></i>
+                            <input type="email" id="usuario" placeholder="seu.email@empresa.com">
+                        </div>
                     </div>
                     <div class="field">
-                        <label>SENHA</label>
-                        <input type="password" id="senha" placeholder="******">
+                        <label for="senha">Senha</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-regular fa-lock"></i>
+                            <input type="password" id="senha" placeholder="••••••••">
+                        </div>
                     </div>
-                    <button class="login-btn" id="btnLogin" onclick="login()">ACESSAR SISTEMA</button>
+                    <button id="btnLogin" class="login-btn" onclick="login()">ACESSAR SISTEMA <i class="fa-solid fa-arrow-right-long" style="margin-left: 8px;"></i></button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="app" id="app">
-        <div class="sidebar">
+    <div id="app" class="app" style="display: none;">
+        
+        <aside class="sidebar">
             <div>
                 <div class="brand">
-                    <div class="brand-logo">N</div>
+                    <div class="brand-logo"><i class="fa-solid fa-cubes"></i></div>
                     <div>
-                        <h2>MTO</h2>
-                        <span>Painel Corporativo</span>
+                        <h2>MTO System</h2>
+                        <span>Painel Operacional</span>
                     </div>
                 </div>
-                <div class="menu">
-                    <button class="active" onclick="abrirPagina('solicitacoes',this)">
-                        <i class="fa-solid fa-table-columns"></i> Painel de Controle
+                <nav class="menu">
+                    <button class="active" onclick="abrirPagina('paginaSolicitacoes', this)">
+                        <i class="fa-solid fa-list-check"></i> Solicitações
                     </button>
-                    <button onclick="abrirPagina('exportacoes',this)">
-                        <i class="fa-solid fa-file-export"></i> Exportações
+                    <button id="formSolicitante" class="hidden" onclick="abrirPagina('paginaNovoPedido', this)">
+                        <i class="fa-solid fa-plus-circle"></i> Novo Pedido
                     </button>
-                </div>
+                </nav>
             </div>
-
             <div class="user-card">
-                <strong id="usuarioLogado">Usuário</strong>
-                <span>Plataforma Corporativa MTO</span>
+                <span id="usuarioLogado">Usuário</span>
+                <span style="font-size: 10px; color: #94a3b8;">Sessão Ativa</span>
                 <button class="logout" onclick="logout()">SAIR</button>
             </div>
-        </div>
+        </aside>
 
-        <div class="main">
-            <div class="topbar">
-                <div class="breadcrumb">Programação MTO / Operações Real-time</div>
+        <main class="main">
+            <header class="topbar">
+                <div class="breadcrumb">Gestão de Prazos e Solicitações MTO</div>
                 <div class="search-box">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="inputBusca" placeholder="Pesquisar por cliente, código, vendedor..." oninput="renderTabela()">
+                    <input type="text" id="inputBusca" placeholder="Pesquisar por cliente, pedido, item..." oninput="renderTabela()">
                 </div>
-            </div>
+            </header>
 
             <div class="content">
-                <div class="page active" id="solicitacoes">
+                
+                <div id="paginaSolicitacoes" class="page active">
                     
-                    <div class="cards">
-                        <div class="card active-filter" id="cardTotal" onclick="filtrarPorStatus('TODOS')">
-                            <div class="card-top">
-                                <div>
-                                    <div class="card-title">Total Geral</div>
-                                    <div class="card-value" id="kpiTotal">0</div>
+                    <div class="dashboard-metrics-grid">
+                        <div class="cards">
+                            <div class="card" onclick="filtrarPorStatus('TODOS')">
+                                <div class="card-top">
+                                    <span class="card-title">TOTAL</span>
+                                    <i class="fa-solid fa-layer-group card-icon-total"></i>
                                 </div>
-                                <i class="fa-solid fa-list card-icon-total"></i>
+                                <div class="card-value" id="kpiTotal">0</div>
+                            </div>
+                            <div class="card" onclick="filtrarPorStatus('PENDENTE')">
+                                <div class="card-top">
+                                    <span class="card-title">PENDENTES</span>
+                                    <i class="fa-solid fa-clock card-icon-pendente"></i>
+                                </div>
+                                <div class="card-value" id="kpiPendentes">0</div>
+                            </div>
+                            <div class="card" onclick="filtrarPorStatus('AGUARDANDO SUPRIMENTOS')">
+                                <div class="card-top">
+                                    <span class="card-title">AG. SUPRIMENTOS</span>
+                                    <i class="fa-solid fa-boxes-stacked card-icon-aguardando-sup"></i>
+                                </div>
+                                <div class="card-value" id="kpiAguardandoSup">0</div>
+                            </div>
+                            <div class="card" onclick="filtrarPorStatus('AGUARDANDO COMERCIAL')">
+                                <div class="card-top">
+                                    <span class="card-title">AG. COMERCIAL</span>
+                                    <i class="fa-solid fa-comments card-icon-aguardando-com"></i>
+                                </div>
+                                <div class="card-value" id="kpiAguardandoCom">0</div>
+                            </div>
+                            <div class="card" onclick="filtrarPorStatus('PROGRAMADO')">
+                                <div class="card-top">
+                                    <span class="card-title">PROGRAMADOS</span>
+                                    <i class="fa-solid fa-circle-check card-icon-programado"></i>
+                                </div>
+                                <div class="card-value" id="kpiProgramados">0</div>
                             </div>
                         </div>
-                        <div class="card" id="cardPendente" onclick="filtrarPorStatus('PENDENTE')">
-                            <div class="card-top">
-                                <div>
-                                    <div class="card-title">Pendentes</div>
-                                    <div class="card-value" id="kpiPendentes">0</div>
-                                </div>
-                                <i class="fa-solid fa-clock card-icon-pendente"></i>
+                        
+                        <div class="chart-card-box">
+                            <div class="chart-title">Resumo por Status</div>
+                            <div class="chart-canvas-container">
+                                <canvas id="doughnutChart"></canvas>
                             </div>
                         </div>
-                        <div class="card" id="cardFinalizado" onclick="filtrarPorStatus('FINALIZADO')">
-                            <div class="card-top">
-                                <div>
-                                    <div class="card-title">Finalizados</div>
-                                    <div class="card-value" id="kpiFinalizados">0</div>
-                                </div>
-                                <i class="fa-solid fa-circle-check card-icon-finalizado"></i>
-                            </div>
-                        </div>
-                        <div class="card" id="cardAguardando" onclick="filtrarPorStatus('AGUARDANDO')">
-                            <div class="card-top">
-                                <div>
-                                    <div class="card-title">Aguardando</div>
-                                    <div class="card-value" id="kpiAguardando">0</div>
-                                </div>
-                                <i class="fa-solid fa-hourglass-half card-icon-aguardando"></i>
-                            </div>
-                        </div>
-                        <div class="card" id="cardPendencia" onclick="filtrarPorStatus('PENDÊNCIA')">
-                            <div class="card-top">
-                                <div>
-                                    <div class="card-title">Pendências</div>
-                                    <div class="card-value" id="kpiPendencias">0</div>
-                                </div>
-                                <i class="fa-solid fa-circle-exclamation card-icon-pendencia"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-box hidden" id="formSolicitante">
-                        <div class="section-title">Nova Solicitação MTO</div>
-                        <div class="grid">
-                            <div>
-                                <label class="field-label">VENDEDOR *</label>
-                                <input type="text" id="vendedorNome" placeholder="Seu nome completo...">
-                            </div>
-                            <div>
-                                <label class="field-label">MERCADO SOLICITANTE</label>
-                                <select id="mercadoSolicitante">
-                                    <option value="Exportação">Exportação</option>
-                                    <option value="BPP">BPP</option>
-                                    <option value="Domestico">Domestico</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="field-label">CLIENTE *</label>
-                                <input type="text" id="cliente" placeholder="Nome do cliente...">
-                            </div>
-                            <div>
-                                <label class="field-label">NÚMERO DO PEDIDO *</label>
-                                <input type="text" id="numeroPedido" placeholder="Número do pedido unificado...">
-                            </div>
-                            <div>
-                                <label class="field-label">ENVIAR PARA</label>
-                                <select id="destinatario">
-                                    <option value="atendimento@pcp.com">Atendimento PCP</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="field-label">DATA SOLICITADA (AUTOMÁTICA)</label>
-                                <input type="text" id="dataSolicitacao" readonly style="letter-spacing: 0.5px;">
-                            </div>
-                        </div>
-
-                        <div class="sub-secao-itens">
-                            <h3 style="font-size: 16px; margin-bottom: 14px; color: #1e293b;"><i class="fa-solid fa-boxes-stacked"></i> Incluir Itens no Pedido</h3>
-                            <div class="grid">
-                                <div>
-                                    <label class="field-label">COD ITEM (Box) *</label>
-                                    <input type="text" id="itemCod" placeholder="Código...">
-                                </div>
-                                <div>
-                                    <label class="field-label">TIPO DE MATERIAL</label>
-                                    <select id="itemTipoMaterial" onchange="calcularPrevisaoItem()">
-                                        <option value="MTO">MTO (12 dias)</option>
-                                        <option value="Etiquetagem">Etiquetagem (17 dias)</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="field-label">QTD SOLICITADA *</label>
-                                    <input type="number" id="itemQuantidade" oninput="calcularPrevisaoItem()" placeholder="0">
-                                </div>
-                                <div>
-                                    <label class="field-label">DATA PREVISTA (AUTOMÁTICA)</label>
-                                    <input type="text" id="itemPrevisaoEntrega" readonly placeholder="Calculada...">
-                                </div>
-                                <div>
-                                    <label class="field-label">DATA CLIENTE</label>
-                                    <input type="date" id="itemDataCliente">
-                                </div>
-                                <div>
-                                    <label class="field-label">DATA DESEJÁVEL</label>
-                                    <input type="date" id="itemDataDesejavel">
-                                </div>
-                            </div>
-                            <button type="button" class="btn-adicionar-item" onclick="adicionarItemNaLista()">＋ Adicionar Item na Lista</button>
-
-                            <div class="tabela-itens-wrapper">
-                                <table class="tabela-itens-provisorios">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 45%;">Item</th>
-                                            <th style="width: 25%;">Quantidade</th>
-                                            <th style="width: 30%;">Pedido</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="listaItensProvisorios">
-                                        <tr>
-                                            <td colspan="3" style="text-align: center; color: #94a3b8; font-style: italic; padding: 14px;">Nenhum item adicionado (Dê duplo clique na linha inserida para remover).</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="grid" style="margin-top: 20px;">
-                            <div class="full">
-                                <label class="field-label">OBSERVAÇÃO GERAL DO PEDIDO</label>
-                                <textarea id="observacao" placeholder="Informações adicionais para a fábrica..."></textarea>
-                            </div>
-                        </div>
-
-                        <button class="send-btn" id="btnEnviarSol" onclick="enviarSolicitacaoMultiiens()">ENVIAR PEDIDO COMPLETO</button>
                     </div>
 
                     <div class="actions">
-                        <input type="month" id="filtroMes" style="max-width:220px;">
-                        <button class="send-btn" style="margin-top:0;" onclick="filtrarMes()">FILTRAR</button>
-                        <button class="logout" style="width:auto; margin-top:0; background:#64748b;" onclick="limparFiltro()">LIMPAR MÊS</button>
+                        <button id="btnRespostaMassa" class="btn-massa hidden" onclick="abrirModalMassa()">
+                            <i class="fa-solid fa-pen-to-square"></i> Responder Selecionados
+                        </button>
+                        
+                        <select id="filtroVendedor" onchange="filtrarVendedor()" style="width: 250px;">
+                            <option value="">Selecione seu nome para filtrar...</option>
+                        </select>
+
+                        <input type="month" id="filtroMes" onchange="filtrarMes()" style="width: 170px;">
+                        <button class="load-more-btn" onclick="limparFiltro()">Limpar Filtros</button>
+                        <button class="load-more-btn" onclick="exportarExcel()"><i class="fa-solid fa-file-excel"></i> Excel</button>
+                        <button class="load-more-btn" onclick="exportarPDF()"><i class="fa-solid fa-file-pdf"></i> PDF</button>
                     </div>
 
                     <div class="table-box">
                         <table id="tabelaMtoHTML">
                             <thead>
                                 <tr>
+                                    <th class="col-checkbox id-pcp-view hidden"><input type="checkbox" onclick="toggleSelecionarTodos(this)"></th>
                                     <th>ID</th>
-                                    <th>TIPO</th>
-                                    <th>MERCADO</th>
-                                    <th>VENDEDOR</th>
-                                    <th>DATA SOLICITADA</th>
-                                    <th>DATA CLIENTE</th>
-                                    <th>DATA PREVISTA</th>
-                                    <th>DATA DESEJÁVEL</th>
-                                    <th>DATA ATENDIMENTO</th>
-                                    <th>DATA PRODUÇÃO</th>
-                                    <th>DATA RETORNO PCP</th>
-                                    <th>ÁREA PCP</th>
-                                    <th>RESPONSÁVEL PCP</th>
-                                    <th>CLIENTE</th>
-                                    <th>COD ITEM (Box)</th>
-                                    <th>Nº PEDIDO</th>
-                                    <th>QTD</th>
-                                    <th>OBSERVAÇÃO / RETORNO</th>
-                                    <th>STATUS</th>
-                                    <th>AÇÃO</th>
+                                    <th>Tipo</th>
+                                    <th>Mercado</th>
+                                    <th>Vendedor</th>
+                                    <th>Data Sol.</th>
+                                    <th>Data Cli.</th>
+                                    <th>Data Prev.</th>
+                                    <th>Data Des.</th>
+                                    <th>Data Atend.</th>
+                                    <th>Data Prod.</th>
+                                    <th>Retorno PCP</th>
+                                    <th>Área PCP</th>
+                                    <th>Resp. PCP</th>
+                                    <th>Cliente</th>
+                                    <th>Código Item</th>
+                                    <th>Nº Pedido</th>
+                                    <th>Qtd</th>
+                                    <th>Observações / Resposta</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
-                            <tbody id="tabelaSolicitacoes"></tbody>
+                            <tbody id="tabelaSolicitacoes">
+                                </tbody>
                         </table>
                     </div>
 
                     <div class="paginacao-container">
-                        <button class="load-more-btn" id="btnCarregarMais" onclick="carregarMaisRegistros()">Carregar Mais Registros</button>
+                        <button class="load-more-btn" onclick="carregarMaisRegistros()">Carregar mais registros</button>
                     </div>
                 </div>
 
-                <div class="page" id="exportacoes">
-                    <div class="cards">
-                        <div class="card">
-                            <div class="card-top">
-                                <div>
-                                    <div class="card-title">Exportar Excel</div>
-                                </div>
-                                <i class="fa-solid fa-file-excel" style="background:#dcfce7; color:#16a34a; font-size:24px; padding:20px; border-radius:14px;"></i>
+                <div id="paginaNovoPedido" class="page">
+                    <div class="form-box">
+                        <div class="section-title">Cadastrar Nova Solicitação de Pedido</div>
+                        <div class="grid">
+                            <div class="field">
+                                <label for="vendedorNome">Vendedor</label>
+                                <select id="vendedorNome">
+                                    <option value="">Selecione o Vendedor...</option>
+                                </select>
                             </div>
-                            <button class="send-btn" onclick="exportarExcel()">BAIXAR XLSX</button>
-                        </div>
-                        <div class="card">
-                            <div class="card-top">
-                                <div>
-                                    <div class="card-title">Exportar PDF</div>
-                                </div>
-                                <i class="fa-solid fa-file-pdf" style="background:#fee2e2; color:#dc2626; font-size:24px; padding:20px; border-radius:14px;"></i>
+                            <div class="field">
+                                <label for="mercadoSolicitante">Mercado Solicitante</label>
+                                <select id="mercadoSolicitante">
+                                    <option value="EXPORTAÇÃO">Exportação</option>
+                                    <option value="BPP">BPP</option>
+                                    <option value="DOMESTICO">Domestico</option>
+                                </select>
                             </div>
-                            <button class="send-btn" onclick="exportarPDF()">BAIXAR PDF</button>
+                            <div class="field">
+                                <label for="dataSolicitacao">Data da Solicitação</label>
+                                <input type="text" id="dataSolicitacao" readonly>
+                            </div>
+                            <div class="field">
+                                <label for="destinatario">Destinatário (E-mail PCP)</label>
+                                <input type="email" id="destinatario" value="atendimento@pcp.com" readonly>
+                            </div>
+                            <div class="field">
+                                <label for="cliente">Cliente</label>
+                                <input type="text" id="cliente" placeholder="Nome do Cliente">
+                            </div>
+                            <div class="field">
+                                <label for="numeroPedido">Número do Pedido</label>
+                                <input type="text" id="numeroPedido" placeholder="Ex: 123456">
+                            </div>
+                            <div class="field full">
+                                <label for="observacao">Observações Gerais</label>
+                                <textarea id="observacao" placeholder="Informações adicionais relevantes..."></textarea>
+                            </div>
                         </div>
+
+                        <div class="sub-secao-itens">
+                            <div class="section-title" style="font-size: 14px; margin-bottom: 8px;">Adicionar Itens ao Pedido</div>
+                            <div class="grid">
+                                <div class="field">
+                                    <label for="itemCod">Código do Item</label>
+                                    <input type="text" id="itemCod" placeholder="Ex: ITEM-001">
+                                </div>
+                                <div class="field">
+                                    <label for="itemTipoMaterial">Tipo de Material</label>
+                                    <select id="itemTipoMaterial" onchange="calcularPrevisaoItem()">
+                                        <option value="MTO">MTO</option>
+                                        <option value="ETIQUETAGEM">ETIQUETAGEM</option>
+                                    </select>
+                                </div>
+                                <div class="field">
+                                    <label for="itemQuantidade">Quantidade <span style="color: #ef4444; font-weight: 700;">(Apenas Box)</span></label>
+                                    <input type="number" id="itemQuantidade" placeholder="0" oninput="calcularPrevisaoItem()">
+                                </div>
+                                <div class="field">
+                                    <label for="itemPrevisaoEntrega">Previsão Automática</label>
+                                    <input type="text" id="itemPrevisaoEntrega" readonly placeholder="Gerado automaticamente">
+                                </div>
+                                <div class="field">
+                                    <label for="itemDataCliente">Data Cliente (Opcional)</label>
+                                    <input type="date" id="itemDataCliente">
+                                </div>
+                                <div class="field">
+                                    <label for="itemDataDesejavel">Data Desejável (Opcional)</label>
+                                    <input type="date" id="itemDataDesejavel">
+                                </div>
+                            </div>
+
+                            <div class="botoes-acoes-itens">
+                                <button type="button" class="btn-adicionar-item" onclick="adicionarItemNaLista()"><i class="fa-solid fa-plus"></i> Adicionar Item</button>
+                                <label class="btn-importar-excel" style="cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                                    <i class="fa-solid fa-file-excel"></i> Importar Excel
+                                    <input type="file" accept=".xlsx, .xls" style="display: none;" onchange="importarItensDoExcel(event)">
+                                </label>
+                            </div>
+
+                            <div class="tabela-itens-wrapper">
+                                <table class="tabela-itens-provisorios">
+                                    <thead>
+                                        <tr>
+                                            <th>Item / Tipo</th>
+                                            <th>Qtd</th>
+                                            <th>Nº Pedido</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="listaItensProvisorios">
+                                        <tr><td colspan="3" style="text-align: center; color: #94a3b8; font-style: italic; padding: 14px;">Nenhum item adicionado.</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <button id="btnEnviarSol" class="send-btn" onclick="enviarSolicitacaoMultiiens()">ENVIAR PEDIDO COMPLETO</button>
                     </div>
                 </div>
+
             </div>
-        </div>
+        </main>
     </div>
 
-    <div class="modal" id="modalResposta">
+    <div id="modalResposta" class="modal">
         <div class="modal-content">
-            <div class="modal-title">Responder Solicitação</div>
-            <div class="field">
-                <label class="field-label">RESPONSÁVEL PELO RETORNO *</label>
-                <input type="text" id="responsavelPcp" placeholder="Seu nome completo...">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTituloGeral">Responder Solicitação</div>
+                <button class="btn-fechar-modal" onclick="fecharModal()">&times;</button>
             </div>
-            <div class="field">
-                <label class="field-label">ÁREA DESIGNADA *</label>
-                <select id="areaPcp">
-                    <option value="Montagem">Montagem</option>
-                    <option value="Escolha">Escolha</option>
-                </select>
+            <div class="grid" style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="field">
+                    <label for="responsavelPcp">Responsável PCP</label>
+                    <input type="text" id="responsavelPcp" placeholder="Seu nome">
+                </div>
+                <div class="field">
+                    <label for="areaPcp">Área PCP</label>
+                    <select id="areaPcp">
+                        <option value="Escolha">Escolha</option>
+                        <option value="PPCP">PPCP</option>
+                        <option value="PRODUCAO">PRODUÇÃO</option>
+                        <option value="SUPRIMENTOS">SUPRIMENTOS</option>
+                        <option value="QUALIDADE">QUALIDADE</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="novoStatus">Novo Status</label>
+                    <select id="novoStatus">
+                        <option value="PENDENTE">PENDENTE</option>
+                        <option value="AGUARDANDO SUPRIMENTOS">AGUARDANDO SUPRIMENTOS</option>
+                        <option value="AGUARDANDO COMERCIAL">AGUARDANDO COMERCIAL</option>
+                        <option value="PROGRAMADO">PROGRAMADO</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="dataProducao">Data de Produção</label>
+                    <input type="date" id="dataProducao">
+                </div>
+                <div class="field">
+                    <label for="dataRetornoPcp">Data de Retorno PCP</label>
+                    <input type="date" id="dataRetornoPcp">
+                </div>
+                <div class="field">
+                    <label for="respostaTexto">Texto da Resposta / Observação</label>
+                    <textarea id="respostaTexto" placeholder="Escreva o retorno para o comercial..."></textarea>
+                </div>
+                <button id="btnSalvarResposta" class="save-btn" onclick="salvarResposta()">ENVIAR RETORNO</button>
             </div>
-            <div class="field">
-                <label class="field-label">RETORNO</label>
-                <textarea id="respostaTexto"></textarea>
-            </div>
-            <div class="field">
-                <label class="field-label">DATA PRODUÇÃO</label>
-                <input type="date" id="dataProducao">
-            </div>
-            <div class="field">
-                <label class="field-label">DATA RETORNO PCP</label>
-                <input type="date" id="dataRetornoPcp">
-            </div>
-            <div class="field">
-                <label class="field-label">STATUS</label>
-                <select id="novoStatus">
-                    <option value="FINALIZADO">FINALIZADO</option>
-                    <option value="AGUARDANDO">AGUARDANDO</option>
-                    <option value="PENDÊNCIA">PENDÊNCIA</option>
-                </select>
-            </div>
-            <button class="save-btn" id="btnSalvarResposta" onclick="salvarResposta()">ENVIAR RETORNO</button>
         </div>
     </div>
 
-    <script>
-        let usuarioAtual = null;
-        let emailAutenticado = "";
-        let solicitacoes = [];
-        let itensDoPedidoAtual = []; 
-        let solicitacaoSelecionadaId = null; 
-        let filtroMesAtual = "";
-        let filtroStatusAtual = "TODOS";
-        let limiteRegistros = 50;
-        let unsubscribeRealtime = null;
-
-        /* TRAVA DATAS RETROATIVAS */
-        function aplicarBloqueioDatasRetroativas() {
-            const hoje = new Date();
-            const ano = hoje.getFullYear();
-            const mes = String(hoje.getMonth() + 1).padStart(2, '0');
-            const dia = String(hoje.getDate()).padStart(2, '0');
-            const dataMinima = `${ano}-${mes}-${dia}`;
-            
-            document.getElementById("itemDataCliente").min = dataMinima;
-            document.getElementById("itemDataDesejavel").min = dataMinima;
-        }
-
-        function configuringDataSolicitacaoAutomatica() {
-            const hoje = new Date();
-            const dia = String(hoje.getDate()).padStart(2, '0');
-            const mes = String(hoje.getMonth() + 1).padStart(2, '0');
-            const ano = hoje.getFullYear();
-            document.getElementById("dataSolicitacao").value = `${dia}/${mes}/${ano}`;
-        }
-
-        function calcularPrevisaoItem() {
-            const tipoMaterial = document.getElementById("itemTipoMaterial").value;
-            const quantidade = document.getElementById("itemQuantidade").value;
-            const campoPrevisao = document.getElementById("itemPrevisaoEntrega");
-
-            if (!quantidade || quantidade <= 0) {
-                campoPrevisao.value = "";
-                return;
-            }
-
-            const dataCalculo = new Date();
-            const diasAdicionais = (tipoMaterial === "MTO") ? 12 : 17;
-            dataCalculo.setDate(dataCalculo.getDate() + diasAdicionais);
-
-            const dia = String(dataCalculo.getDate()).padStart(2, '0');
-            const mes = String(dataCalculo.getMonth() + 1).padStart(2, '0');
-            const ano = dataCalculo.getFullYear();
-
-            campoPrevisao.value = `${dia}/${mes}/${ano}`;
-        }
-
-        /* OPERAÇÃO DA LISTA DE ITENS PROVISÓRIOS */
-        function adicionarItemNaLista() {
-            const cod = document.getElementById("itemCod").value.trim();
-            const tipo = document.getElementById("itemTipoMaterial").value;
-            const qtd = document.getElementById("itemQuantidade").value;
-            const prev = document.getElementById("itemPrevisaoEntrega").value;
-            const dtCliRaw = document.getElementById("itemDataCliente").value;
-            const dtDesRaw = document.getElementById("itemDataDesejavel").value;
-            const numPedido = document.getElementById("numeroPedido").value.trim();
-
-            if(!numPedido) {
-                alert("Por favor, digite o NÚMERO DO PEDIDO acima antes de adicionar itens.");
-                return;
-            }
-
-            if(!cod || !qtd || !prev) {
-                alert("Por favor, preencha o Código do item, a Quantidade e gere a Previsão antes de adicionar.");
-                return;
-            }
-
-            let dtCliFormatada = "-";
-            if(dtCliRaw) {
-                const p = dtCliRaw.split('-');
-                dtCliFormatada = `${p[2]}/${p[1]}/${p[0]}`;
-            }
-
-            let dtDesFormatada = "-";
-            if(dtDesRaw) {
-                const p = dtDesRaw.split('-');
-                dtDesFormatada = `${p[2]}/${p[1]}/${p[0]}`;
-            }
-
-            itensDoPedidoAtual.push({
-                codItem: cod,
-                tipoMaterial: tipo,
-                quantidade: Number(qtd),
-                dataPrevista: prev,
-                dataCliente: dtCliFormatada,
-                dataDesejavel: dtDesFormatada,
-                numeroPedido: numPedido
-            });
-
-            // Limpa apenas campos internos do item
-            document.getElementById("itemCod").value = "";
-            document.getElementById("itemQuantidade").value = "";
-            document.getElementById("itemPrevisaoEntrega").value = "";
-            document.getElementById("itemDataCliente").value = "";
-            document.getElementById("itemDataDesejavel").value = "";
-
-            renderListaItensProvisorios();
-        }
-
-        function removerItemDaLista(index) {
-            itensDoPedidoAtual.splice(index, 1);
-            renderListaItensProvisorios();
-        }
-
-        /* RENDERIZAÇÃO DA TABELA ULTRA COMPACTA */
-        function renderListaItensProvisorios() {
-            const tbody = document.getElementById("listaItensProvisorios");
-            if(itensDoPedidoAtual.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: #94a3b8; font-style: italic; padding: 14px;">Nenhum item adicionado (Dê duplo clique na linha inserida para remover).</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = "";
-            itensDoPedidoAtual.forEach((item, index) => {
-                tbody.innerHTML += `
-                    <tr class="item-row" ondblclick="removerItemDaLista(${index})" title="Duplo clique para remover">
-                        <td><span style="font-weight:600; color:#0f172a;">${item.codItem}</span> <small style="color:#64748b;">(${item.tipoMaterial})</small></td>
-                        <td><strong>${item.quantidade}</strong></td>
-                        <td><span style="color:#475569;">${item.numeroPedido}</span></td>
-                    </tr>
-                `;
-            });
-        }
-
-        async function login(){
-            const email = document.getElementById("usuario").value.trim().toLowerCase();
-            const senha = document.getElementById("senha").value;
-            const btn = document.getElementById("btnLogin");
-
-            if(!email || !senha){
-                alert("Por favor, preencha o e-mail e a senha.");
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerText = "ACESSANDO...";
-
-            try {
-                await window.signInWithEmailAndPassword(window.auth, email, senha);
-                emailAutenticado = email;
-
-                if(email === "programacaomto@vendedor.com"){
-                    usuarioAtual = "Vendedor/Comercial";
-                } else if(email === "atendimento@pcp.com"){
-                    usuarioAtual = "Atendimento-PCP"; 
-                } else {
-                    usuarioAtual = email.split('@')[0];
-                }
-
-                document.getElementById("loginScreen").style.display = "none";
-                document.getElementById("app").style.display = "flex";
-                document.getElementById("usuarioLogado").innerText = usuarioAtual;
-
-                if(email === "programacaomto@vendedor.com"){
-                    document.getElementById("formSolicitante").classList.remove("hidden");
-                    configuringDataSolicitacaoAutomatica();
-                    aplicarBloqueioDatasRetroativas();
-                }
-
-                inicializarOuvinteFirebase();
-
-            } catch (error) {
-                console.error("Erro na autenticação:", error);
-                alert("Credenciais inválidas ou erro de rede.");
-                btn.disabled = false;
-                btn.innerText = "ACESSAR SISTEMA";
-            }
-        }
-
-        function logout(){
-            location.reload();
-        }
-
-        function abrirPagina(id,btn){
-            document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
-            document.getElementById(id).classList.add("active");
-            document.querySelectorAll(".menu button").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-        }
-
-        /* CONEXÃO FIRESTORE COM PAGINAÇÃO DINÂMICA */
-        function inicializarOuvinteFirebase() {
-            if(!window.db) {
-                setTimeout(inicializarOuvinteFirebase, 500);
-                return;
-            }
-
-            if(unsubscribeRealtime) unsubscribeRealtime();
-
-            let q;
-            if (emailAutenticado === "atendimento@pcp.com") {
-                q = window.db_query(
-                    window.db_collection(window.db, "solicitacoes"),
-                    window.db_orderBy("id", "desc"),
-                    window.db_limit(limiteRegistros)
-                );
-            } else {
-                q = window.db_query(
-                    window.db_collection(window.db, "solicitacoes"), 
-                    window.db_where("remetenteEmail", "==", emailAutenticado),
-                    window.db_orderBy("id", "desc"),
-                    window.db_limit(limiteRegistros)
-                );
-            }
-            
-            unsubscribeRealtime = window.db_onSnapshot(q, (querySnapshot) => {
-                solicitacoes = [];
-                querySnapshot.forEach((doc) => {
-                    let dados = doc.data();
-                    dados.docId = doc.id;
-                    solicitacoes.push(dados);
-                });
-                renderTabela();
-            }, (error) => {
-                console.error("Erro no Listener Real-time:", error);
-            });
-        }
-
-        function carregarMaisRegistros() {
-            limiteRegistros += 50;
-            inicializarOuvinteFirebase();
-        }
-
-        /* ENVIO DE MULTI-ITENS PARA O FIREBASE (CORRIGIDO ID DO INPUT) */
-        async function enviarSolicitacaoMultiiens(){
-            const vendedor = document.getElementById("vendedorNome").value.trim();
-            const mercadoValor = document.getElementById("mercadoSolicitante").value;
-            const cli = document.getElementById("cliente").value.trim();
-            const numPedido = document.getElementById("numeroPedido").value.trim(); 
-            const dataSol = document.getElementById("dataSolicitacao").value;
-            const obs = document.getElementById("observacao").value;
-            const dest = document.getElementById("destinatario").value;
-            const btn = document.getElementById("btnEnviarSol");
-
-            if(!vendedor) { alert("O preenchimento do campo VENDEDOR é obrigatório."); return; }
-            if(!cli || !numPedido) { alert("Os campos CLIENTE e NÚMERO DO PEDIDO são obrigatórios."); return; }
-            if(itensDoPedidoAtual.length === 0) { alert("Você deve adicionar pelo menos 1 item na lista antes de enviar o pedido."); return; }
-
-            btn.disabled = true;
-            btn.innerText = "ENVIANDO PEDIDO...";
-
-            try {
-                for(let i = 0; i < itensDoPedidoAtual.length; i++) {
-                    const item = itensDoPedidoAtual[i];
-                    
-                    const novaSolicitacao = {
-                        id: Date.now() + i, 
-                        vendedor: vendedor,
-                        tipoMaterial: item.tipoMaterial,
-                        mercadoSolicitante: mercadoValor,
-                        dataSolicitacao: dataSol, 
-                        dataCliente: item.dataCliente,
-                        dataPrevista: item.dataPrevista,
-                        dataDesejavel: item.dataDesejavel,
-                        dataAtendimento: "-",
-                        dataProducao: "-",
-                        dataRetornoPcp: "-",
-                        areaPcp: "-",
-                        responsavelPcp: "-",
-                        cliente: cli,
-                        codItem: item.codItem,
-                        numeroPedido: numPedido, 
-                        quantidade: item.quantidade,
-                        observacao: obs,
-                        remetenteEmail: emailAutenticado,
-                        destinatario: dest,
-                        status: "PENDENTE",
-                        resposta: "",
-                        logAuditoria: ""
-                    };
-
-                    await window.db_addDoc(window.db_collection(window.db, "solicitacoes"), novaSolicitacao);
-                }
-
-                alert("Pedido completo enviado com sucesso! " + itensDoPedidoAtual.length + " itens cadastrados.");
-                
-                // Limpeza geral do formulário
-                document.getElementById("cliente").value = "";
-                document.getElementById("numeroPedido").value = ""; 
-                document.getElementById("observacao").value = "";
-                itensDoPedidoAtual = [];
-                renderListaItensProvisorios();
-                configuringDataSolicitacaoAutomatica();
-
-            } catch (error) {
-                console.error(error);
-                alert("Erro ao gravar dados do pedido múltiplo.");
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "ENVIAR PEDIDO COMPLETO";
-            }
-        }
-
-        function filtrarPorStatus(status) {
-            filtroStatusAtual = status;
-            document.querySelectorAll(".card").forEach(c => c.classList.remove("active-filter"));
-            
-            if(status === 'TODOS') document.getElementById("cardTotal").classList.add("active-filter");
-            if(status === 'PENDENTE') document.getElementById("cardPendente").classList.add("active-filter");
-            if(status === 'FINALIZADO') document.getElementById("cardFinalizado").classList.add("active-filter");
-            if(status === 'AGUARDANDO') document.getElementById("cardAguardando").classList.add("active-filter");
-            if(status === 'PENDÊNCIA') document.getElementById("cardPendencia").classList.add("active-filter");
-
-            renderTabela();
-        }
-
-        function filtrarMes(){
-            filtroMesAtual = document.getElementById("filtroMes").value;
-            renderTabela();
-        }
-
-        function limparFiltro(){
-            filtroMesAtual = "";
-            document.getElementById("filtroMes").value = "";
-            renderTabela();
-        }
-
-        /* RENDERIZAÇÃO CENTRAL DA TABELA */
-        function renderTabela(){
-            const tabela = document.getElementById("tabelaSolicitacoes");
-            const busca = document.getElementById("inputBusca").value.toLowerCase().trim();
-            tabela.innerHTML = "";
-
-            let filtradas = solicitacoes.filter(item => {
-                if(filtroStatusAtual !== "TODOS" && item.status !== filtroStatusAtual) return false;
-
-                if(filtroMesAtual && item.dataSolicitacao){
-                    const partes = item.dataSolicitacao.split('/');
-                    if(partes.length === 3) {
-                        const mesAnoRef = `${partes[2]}-${partes[1]}`;
-                        if(mesAnoRef !== filtroMesAtual) return false;
-                    }
-                }
-
-                if(busca){
-                    const matchCliente = item.cliente && item.cliente.toLowerCase().includes(busca);
-                    const matchCodigo = item.codItem && item.codItem.toLowerCase().includes(busca);
-                    const matchVendedor = item.vendedor && item.vendedor.toLowerCase().includes(busca);
-                    const matchMercado = item.mercadoSolicitante && item.mercadoSolicitante.toLowerCase().includes(busca);
-                    const matchPedido = item.numeroPedido && item.numeroPedido.toLowerCase().includes(busca);
-                    return matchCliente || matchCodigo || matchVendedor || matchMercado || matchPedido;
-                }
-
-                return true;
-            });
-
-            filtradas.forEach(item => {
-                let botoesAcao = '-';
-                if(emailAutenticado === "atendimento@pcp.com") {
-                    let btnResponder = item.status !== "FINALIZADO" ? `<button class="action-btn" onclick="abrirModal('${item.docId}')">RESPONDER</button>` : '';
-                    let btnExcluir = `<button class="delete-btn" onclick="deletarSolicitacao('${item.docId}')"><i class="fa-solid fa-trash"></i></button>`;
-                    botoesAcao = btnResponder + btnExcluir;
-                }
-
-                tabela.innerHTML += `
-                <tr>
-                    <td>${item.id}</td>
-                    <td><strong>${item.tipoMaterial || "MTO"}</strong></td>
-                    <td><span style="color:#475569; font-weight:600;">${item.mercadoSolicitante || "-"}</span></td>
-                    <td><span style="color:#1e40af; font-weight:600;">${item.vendedor || "-"}</span></td>
-                    <td>${item.dataSolicitacao}</td>
-                    <td>${item.dataCliente}</td>
-                    <td style="color:#1d4ed8; font-weight:700; background:#eff6ff;">${item.dataPrevista || "-"}</td>
-                    <td style="color:#0ea5e9; font-weight:700;">${item.dataDesejavel || "-"}</td>
-                    <td>${item.dataAtendimento}</td>
-                    <td>${item.dataProducao}</td>
-                    <td>${item.dataRetornoPcp}</td>
-                    <td><span style="font-weight:600; color:#475569;">${item.areaPcp || "-"}</span></td>
-                    <td><strong>${item.responsavelPcp || "-"}</strong></td>
-                    <td>${item.cliente}</td>
-                    <td>${item.codItem}</td>
-                    <td style="font-weight:600; color:#334155;">${item.numeroPedido || "-"}</td>
-                    <td>${item.quantidade}</td>
-                    <td>
-                        <div style="text-align:left;">${item.observacao}</div>
-                        ${item.resposta ? `<div class="response"><b>RETORNO PCP:</b><br>${item.resposta}</div>` : ''}
-                        ${item.logAuditoria ? `<div class="log-auditoria"><i class="fa-solid fa-clock-rotate-left"></i> ${item.logAuditoria}</div>` : ''}
-                    </td>
-                    <td>
-                        <span class="badge ${
-                            item.status === 'FINALIZADO' ? 'finalizado' :
-                            item.status === 'AGUARDANDO' ? 'aguardando' :
-                            item.status === 'PENDÊNCIA' ? 'pendencia' : 'pendente'
-                        }">
-                            ${item.status}
-                        </span>
-                    </td>
-                    <td>${botoesAcao}</td>
-                </tr>`;
-            });
-
-            atualizarKPIs();
-        }
-
-        function atualizarKPIs(){
-            document.getElementById("kpiTotal").innerText = solicitacoes.length;
-            document.getElementById("kpiPendentes").innerText = solicitacoes.filter(x => x.status === "PENDENTE").length;
-            document.getElementById("kpiFinalizados").innerText = solicitacoes.filter(x => x.status === "FINALIZADO").length;
-            document.getElementById("kpiAguardando").innerText = solicitacoes.filter(x => x.status === "AGUARDANDO").length;
-            document.getElementById("kpiPendencias").innerText = solicitacoes.filter(x => x.status === "PENDÊNCIA").length;
-        }
-
-        async function deletarSolicitacao(docId) {
-            if(!confirm("Tem certeza que deseja apagar permanentemente esta solicitação?")) return;
-            try {
-                await window.db_deleteDoc(window.db_doc(window.db, "solicitacoes", docId));
-                alert("Solicitação deletada!");
-            } catch (error) {
-                alert("Erro ao remover.");
-            }
-        }
-
-        /* MODAL RESPOSTA (PCP) */
-        function abrirModal(docId){
-            solicitacaoSelecionadaId = docId;
-            const item = solicitacoes.find(x => x.docId === docId);
-
-            document.getElementById("responsavelPcp").value = item.responsavelPcp !== "-" ? item.responsavelPcp : "";
-            document.getElementById("areaPcp").value = item.areaPcp !== "-" ? item.areaPcp : "Montagem";
-            document.getElementById("respostaTexto").value = item.resposta || "";
-            document.getElementById("dataProducao").value = item.dataProducao !== "-" ? item.dataProducao : "";
-            document.getElementById("dataRetornoPcp").value = item.dataRetornoPcp !== "-" ? item.dataRetornoPcp : "";
-            document.getElementById("novoStatus").value = item.status || "PENDENTE";
-
-            document.getElementById("modalResposta").style.display = "flex";
-        }
-
-        window.onclick = function(e) {
-            const m = document.getElementById("modalResposta");
-            if (e.target == m) m.style.display = "none";
-        }
-
-        async function salvarResposta(){
-            if(!solicitacaoSelecionadaId) return;
-            const respPcp = document.getElementById("responsavelPcp").value.trim();
-            const areaDesignada = document.getElementById("areaPcp").value;
-            const txtResposta = document.getElementById("respostaTexto").value;
-            const dtProd = document.getElementById("dataProducao").value || "-";
-            const dtRetPcp = document.getElementById("dataRetornoPcp").value || "-";
-            const nStatus = document.getElementById("novoStatus").value;
-            
-            if(!respPcp) { alert("Insira o nome do Responsável pelo PCP."); return; }
-
-            const btn = document.getElementById("btnSalvarResposta");
-            btn.disabled = true;
-
-            const agora = new Date();
-            const timestampLog = `Modificado por ${emailAutenticado} em ${agora.toLocaleDateString("pt-BR")} às ${agora.toLocaleTimeString("pt-BR")}`;
-
-            try {
-                await window.db_updateDoc(window.db_doc(window.db, "solicitacoes", solicitacaoSelecionadaId), {
-                    responsavelPcp: respPcp,
-                    areaPcp: areaDesignada,
-                    resposta: txtResposta,
-                    dataProducao: dtProd,
-                    dataRetornoPcp: dtRetPcp,
-                    status: nStatus,
-                    dataAtendimento: agora.toLocaleDateString("pt-BR"),
-                    logAuditoria: timestampLog
-                });
-                document.getElementById("modalResposta").style.display = "none";
-                alert("Retorno atualizado com sucesso!");
-            } catch (error) {
-                alert("Erro ao salvar retorno.");
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "ENVIAR RETORNO";
-            }
-        }
-
-        /* EXPORTAÇÕES */
-        function exportarExcel(){
-            const dadosLimpos = solicitacoes.map(({docId, ...resto}) => resto);
-            const worksheet = XLSX.utils.json_to_sheet(dadosLimpos);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "MTO");
-            XLSX.writeFile(workbook, "Programacao_MTO.xlsx");
-        }
-
-        async function exportarPDF(){
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('landscape');
-            doc.text("Programação MTO - Relatorio Operacional", 14, 15);
-            doc.autoTable({ 
-                html: '#tabelaMtoHTML',
-                startY: 22,
-                theme: 'striped',
-                styles: { fontSize: 7 },
-                columns: [
-                    { header: 'ID', dataKey: '0' },
-                    { header: 'TIPO', dataKey: '1' },
-                    { header: 'MERCADO', dataKey: '2' },
-                    { header: 'VENDEDOR', dataKey: '3' },
-                    { header: 'DT SOL', dataKey: '4' },
-                    { header: 'DT PREV', dataKey: '6' },
-                    { header: 'ÁREA', dataKey: '11' },
-                    { header: 'RESP PCP', dataKey: '12' },
-                    { header: 'CLIENTE', dataKey: '13' },
-                    { header: 'QTD', dataKey: '16' },
-                    { header: 'STATUS', dataKey: '18' }
-                ]
-            });
-            doc.save("Programacao_MTO.pdf");
-        }
-    </script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
